@@ -1,11 +1,18 @@
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import Model.Requirement;
+import Model.TestRun;
+import Model.Testcase;
+import com.google.gson.*;
+import jdk.nashorn.internal.parser.JSONParser;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
 
 
 public class Main {
@@ -14,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
         String path;
-
+        TestRun testRun;
         //check if arguments are provided
 
         try {
@@ -42,7 +49,81 @@ public class Main {
 
             JsonArray results = jelement.getAsJsonArray();
 
-            System.out.println(results.get(1).toString() + "   " + results.size());
+//            System.out.println(results.get(1).toString() + "   " + results.size());
+
+
+
+//            ArrayList<JsonObject> list = new ArrayList<JsonObject>();
+
+            Date date = new Date();
+
+            testRun = new TestRun(date.toString());
+            for (JsonElement obj : results ) {
+
+
+
+
+            if(obj.getAsJsonObject().get("requirement") != null ) {
+
+                String[] reqobject = obj.getAsJsonObject().get("requirement").getAsString().split(Pattern.quote("-"));
+                String requirement = reqobject[0];
+
+
+//                System.out.println("requirement: " + requirement );
+
+                Requirement reqObj;
+                reqObj = testRun.getRequirementByName(requirement);
+
+
+                String testcase;
+                if (reqobject.length < 2 ) {
+                    testcase = "NOID";
+                } else {
+                    testcase = reqobject[1];
+                   Testcase tc1 = new Testcase(testcase);
+                   if(obj.getAsJsonObject().get("exception") != null) {
+                       tc1.addStacktrace(obj.getAsJsonObject().get("exception").toString());
+                   }
+                    reqObj.addTestcase(tc1);
+                }
+
+
+                } else {
+                        testRun.addUnlisted();
+            }
+
+
+
+
+
+
+
+
+
+
+
+            }
+
+
+
+//
+
+
+            GsonBuilder builder = new GsonBuilder();
+//            builder.registerTypeAdapter(Requirement, new RequirementTypeAdapter)
+
+//            Gson gson = new Gson();
+
+
+//            String json = builder.toJson(testRun.getRequirements());
+                String json = "";
+
+            PrintWriter writer = new PrintWriter(path + ".txt", "UTF-8");
+//                writer.println("The first line");
+            writer.print(json);
+//                writer.println("The second line");
+            writer.close();
+
 
 
         } catch (IOException e) {
