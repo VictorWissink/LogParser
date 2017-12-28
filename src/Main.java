@@ -19,10 +19,10 @@ public class Main {
 
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String path;
         TestRun testRun;
-        //check if arguments are provided
+        //check of argumenten meegegeven zijn
 
         try {
             path = args[0];
@@ -37,8 +37,6 @@ public class Main {
             File requirementLog = new File(path);
             String fileContents = FileUtils.readFileToString(requirementLog, "UTF-8");
 
-
-
             if (fileContents != null && fileContents.length() > 0 && fileContents.charAt(fileContents.length() - 3) == ',') {
                 fileContents = fileContents.substring(0, fileContents.length() - 3);
             }
@@ -49,93 +47,56 @@ public class Main {
 
             JsonArray results = jelement.getAsJsonArray();
 
-//            System.out.println(results.get(1).toString() + "   " + results.size());
-
-
-
-//            ArrayList<JsonObject> list = new ArrayList<JsonObject>();
-
             Date date = new Date();
 
             testRun = new TestRun(date.toString());
             for (JsonElement obj : results ) {
-
-
-
 
             if(obj.getAsJsonObject().get("requirement") != null ) {
 
                 String[] reqobject = obj.getAsJsonObject().get("requirement").getAsString().split(Pattern.quote("-"));
                 String requirement = reqobject[0];
 
-
-//                System.out.println("requirement: " + requirement );
-
                 Requirement reqObj;
                 reqObj = testRun.getRequirementByName(requirement);
 
 
+                //check of de testcase ID is meegegeven
                 String testcase;
                 if (reqobject.length < 2 ) {
                     testcase = "NOID";
                 } else {
                     testcase = reqobject[1];
-                   Testcase tc1 = new Testcase(testcase);
-                   if(obj.getAsJsonObject().get("exception") != null) {
-                       tc1.addStacktrace(obj.getAsJsonObject().get("exception").toString());
-                   }
-                    reqObj.addTestcase(tc1);
                 }
+
+                //maak de testcase aan en voeg deze toe aan de requirement
+                Testcase tc1 = new Testcase(testcase);
+                if(obj.getAsJsonObject().get("exception") != null) {
+                    tc1.addStacktrace(obj.getAsJsonObject().get("exception").toString());
+                }
+                 reqObj.addTestcase(tc1);
+
+                //voeg de requirement toe aan de testrun
                 testRun.addRequirement(reqObj);
 
                 } else {
                         testRun.addUnlisted();
             }
 
-
-
-
-
-
-
-
-
-
-
             }
 
-
-
-//
-
-
-            GsonBuilder builder = new GsonBuilder();
-//            builder.registerTypeAdapter(Requirement, new RequirementTypeAdapter)
-
             Gson gson = new Gson();
-
-
             String json = gson.toJson(testRun);
-//                String json = "";
-
-            PrintWriter writer = new PrintWriter(path + ".txt", "UTF-8");
-//                writer.println("The first line");
+            PrintWriter writer = new PrintWriter(path, "UTF-8");
             writer.print(json);
-//                writer.println("The second line");
             writer.close();
 
 
 
         } catch (IOException e) {
             System.out.println("can't read JSON file");
-
+            throw e;
         }
-
-
-
-
-//        File CP_file = new File(path);
-
 
     }
 }
