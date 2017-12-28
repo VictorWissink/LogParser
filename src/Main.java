@@ -86,7 +86,7 @@ public class Main {
                    }
                     reqObj.addTestcase(tc1);
                 }
-
+                testRun.addRequirement(reqObj);
 
                 } else {
                         testRun.addUnlisted();
@@ -112,11 +112,11 @@ public class Main {
             GsonBuilder builder = new GsonBuilder();
 //            builder.registerTypeAdapter(Requirement, new RequirementTypeAdapter)
 
-//            Gson gson = new Gson();
+            Gson gson = new Gson();
 
 
-//            String json = builder.toJson(testRun.getRequirements());
-                String json = "";
+            String json = gson.toJson(testRun);
+//                String json = "";
 
             PrintWriter writer = new PrintWriter(path + ".txt", "UTF-8");
 //                writer.println("The first line");

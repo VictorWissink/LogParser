@@ -13,14 +13,5 @@ public class Testcase {
     }
 
 
-    public String toString() {
-        String json = " \"name\" : \"" + name + "\"";
-
-        if(stacktrace != null) {
-          String stacktrace =  " \"exception\" : \"" + stacktrace + "\"";
-        }
-
-        return "";
-    }
 
 }

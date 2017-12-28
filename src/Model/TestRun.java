@@ -17,19 +17,6 @@ public class TestRun {
         unlisted++;
     }
 
-    public ArrayList<Requirement> getRequirements() {
-        return requirements;
-    }
-
-    public ArrayList<String> getAllRequirementNames() {
-        ArrayList<String> allNames = new ArrayList<String>();
-
-        for(Requirement req : requirements) {
-            allNames.add(req.getName());
-        }
-
-        return allNames;
-    }
 
     public Requirement getRequirementByName(String name) {
         for (Requirement r : requirements) {
@@ -42,14 +29,18 @@ public class TestRun {
     }
 
 
+    public void addRequirement(Requirement req) {
+        for (Requirement r : requirements) {
+            if (r.getName().equals(req.getName())) {
+                //place the requirement back in the array if it's found
+                r = req;
+                return;
 
-    public String toString() {
+            }
+        }
 
-        return "";
+        requirements.add(req);
+
+
     }
-
-
-
-
-
 }
